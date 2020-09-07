@@ -1,7 +1,8 @@
-json.book do
-    json.isbn '1617292397'
-    json.image_url 'https://books.google.com/books/content?id=UXNaAQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api'
-    json.title 'Soft Skills'
-    json.author 'John Z. Sonmez'
-    json.date '2019-12-17'
+json.array! @books do |book|
+    json.isbn book[:isbn]
+    json.image_url book[:image_url]
+    json.title book[:title]
+    json.author book[:author]
+    json.date book[:date]
 end
+  
