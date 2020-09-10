@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  isbn: MyString
+  image_url: MyString
+  title: MyString
+  author: MyString
+  date: 2020-09-10
+  note: MyText
+
+two:
+  isbn: MyString
+  image_url: MyString
+  title: MyString
+  author: MyString
+  date: 2020-09-10
+  note: MyText
