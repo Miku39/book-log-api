@@ -39,6 +39,7 @@ development:
   # domain sockets, so uncomment these lines.
   host: db
 
+
   # The TCP port the server listens on. Defaults to 5432.
   # If your server runs on a different port number, change accordingly.
   #port: 5432
@@ -78,8 +79,6 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
+
 production:
-  <<: *default
-  database: book_log_api_production
-  username: book_log_api
-  password: <%= ENV['BOOK_LOG_API_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
