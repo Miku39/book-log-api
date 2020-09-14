@@ -1,4 +1,6 @@
 class BooksController < ApplicationController
+    protect_from_forgery
+
     # 本のリストを表示する
     def index
         @books = Book.all
@@ -15,6 +17,12 @@ class BooksController < ApplicationController
         end
 
         render 'show', formats: :json, handlers: 'jbuilder'
+    end
+
+    # 本を登録する
+    def create
+        p "create method"
+        render status: 200, json: { status: 200, message: "create method" }
     end
 end
 
