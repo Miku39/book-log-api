@@ -21,7 +21,19 @@ class BooksController < ApplicationController
 
     # 本を登録する
     def create
-        p "create method"
+        
+        # 送られてきたISBNを使用して本の情報を取得する
+        url = URI.parse("https://www.googleapis.com/books/v1/volumes?q=isbn:#{params[:isbn]}")
+        http = Net::HTTP.new(url.host, url.port)
+        http.use_ssl = true
+
+        request = Net::HTTP::Get.new(url)
+
+        response = http.request(request)
+        puts response.read_body
+
+        # TODO DB登録, レスポンス作成
+
         render status: 200, json: { status: 200, message: "create method" }
     end
 end
