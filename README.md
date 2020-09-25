@@ -5,19 +5,19 @@ RESTful API for my book logs.
 - get book log list
 
 ```
-[GET] /book
+[GET] /books
 ```
 
 - get book log detail
 
 ```
-[GET] /book/<id>
+[GET] /books/<id>
 ```
 
 - register book log
 
 ```
-[POST] /book
+[POST] /books
 
 {
     isbn: <isbn>

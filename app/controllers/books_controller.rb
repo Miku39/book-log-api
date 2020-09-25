@@ -12,8 +12,7 @@ class BooksController < ApplicationController
         @book = Book.find_by_id(params[:id])
         # 本がない場合
         if @book.nil?
-            render status: 404, json: { status: 404, message: "id:#{params[:id]} Not Found" }
-            return
+            halt status: 404, json: { status: 404, message: "id:#{params[:id]} Not Found" }
         end
 
         render 'show', formats: :json, handlers: 'jbuilder'
@@ -30,9 +29,25 @@ class BooksController < ApplicationController
         request = Net::HTTP::Get.new(url)
 
         response = http.request(request)
-        puts response.read_body
+        responseJson = response.read_body
 
         # TODO DB登録, レスポンス作成
+
+        # responseからデータを抽出する
+        # volumeInfo = responseJson.items[0].volumeInfo
+        # p volumeInfo.imageLinks.thumbnail
+        # p volumeInfo.title
+        # p volumeInfo.authors[0]
+        
+        # TODO: modelに移動？
+        # book = Book.create(
+        #     isbn: params[:isbn], 
+        #     image_url: responseJson.items[0].,
+        #     title: "",
+        #     author: "",
+        #     date: "",
+        #     note: ""
+        # )
 
         render status: 200, json: { status: 200, message: "create method" }
     end
