@@ -21,6 +21,7 @@ class BooksController < ApplicationController
     # 本を登録する
     def create
         
+        # TODO: modelに記載する
         # 送られてきたISBNを使用して本の情報を取得する
         url = URI.parse("https://www.googleapis.com/books/v1/volumes?q=isbn:#{params[:isbn]}")
         http = Net::HTTP.new(url.host, url.port)
@@ -30,26 +31,21 @@ class BooksController < ApplicationController
 
         response = http.request(request)
         responseJson = response.read_body
+        hash = JSON.parse(responseJson)
 
-        # TODO DB登録, レスポンス作成
+        # DBに登録
+        volumeInfo = hash["items"][0]["volumeInfo"]
+        book = Book.create(
+            isbn: params[:isbn], 
+            image_url: volumeInfo["imageLinks"]["thumbnail"],
+            title: volumeInfo["title"],
+            author: volumeInfo["authors"][0]
+        )
 
-        # responseからデータを抽出する
-        # volumeInfo = responseJson.items[0].volumeInfo
-        # p volumeInfo.imageLinks.thumbnail
-        # p volumeInfo.title
-        # p volumeInfo.authors[0]
-        
-        # TODO: modelに移動？
-        # book = Book.create(
-        #     isbn: params[:isbn], 
-        #     image_url: responseJson.items[0].,
-        #     title: "",
-        #     author: "",
-        #     date: "",
-        #     note: ""
-        # )
-
-        render status: 200, json: { status: 200, message: "create method" }
+        # TODO: showと同じjsonを返すようにする
+        render status: 200, json: { 
+            message: "title: #{volumeInfo["title"]}, author: #{volumeInfo["authors"][0]}"
+        }
     end
 end
 
