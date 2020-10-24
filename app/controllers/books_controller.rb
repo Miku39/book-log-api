@@ -24,6 +24,12 @@ class BooksController < ApplicationController
 
         render 'show', formats: :json, handlers: 'jbuilder'
     end
+
+    # Slack から本を登録する
+    def createUsingSlack
+        p "aaaa"
+    end
+
 end
 
 
