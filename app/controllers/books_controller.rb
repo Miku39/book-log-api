@@ -28,6 +28,14 @@ class BooksController < ApplicationController
     # Slack から本を登録する
     def slack
         p "aaaa"
+        @book = {
+            id: "777",
+            isbn: "isbn", 
+            image_url: "",
+            title: "タイトル",
+            author: "著者"
+        }
+        render 'show', formats: :json, handlers: 'jbuilder'
     end
 
 end
