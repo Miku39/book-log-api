@@ -26,7 +26,7 @@ class BooksController < ApplicationController
     end
 
     # Slack から本を登録する
-    def createUsingSlack
+    def slack
         p "aaaa"
     end
 
