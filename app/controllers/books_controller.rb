@@ -27,7 +27,9 @@ class BooksController < ApplicationController
 
     # Slack から本を登録する
     def slack
-        p "aaaa"
+        p "[start] print params"
+        p params
+        p "[end] print params"
         @book = {
             id: "777",
             isbn: "isbn", 
