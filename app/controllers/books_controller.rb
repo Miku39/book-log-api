@@ -27,16 +27,7 @@ class BooksController < ApplicationController
 
     # Slack から本を登録する
     def slack
-        p "[start] print params"
-        p params
-        p "[end] print params"
-        @book = {
-            id: "777",
-            isbn: "isbn", 
-            image_url: "",
-            title: "タイトル",
-            author: "著者"
-        }
+        @book = Book.create_with_isbn(params[:text])
         render 'show', formats: :json, handlers: 'jbuilder'
     end
 
