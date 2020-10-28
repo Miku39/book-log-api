@@ -28,6 +28,11 @@ class BooksController < ApplicationController
     # Slack から本を登録する
     def slack
         @book = Book.create_with_isbn(params[:text])
+        # TODO 修正
+        HTTParty.post(params[:response_url], { body: @book.to_json, headers: {
+            "Content-Type" => "application/json"
+          }
+        })
         render 'show', formats: :json, handlers: 'jbuilder'
     end
 
