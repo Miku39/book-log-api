@@ -27,14 +27,17 @@ class BooksController < ApplicationController
 
     # Slack から本を登録する
     def slack
-        # TODO delete
-        # todo 
+        # TODO print delete
         p "slack method!!!" 
         p params
 
         # 送られてきたISBNを使用して本の情報を取得する
         @book = Book.create_with_isbn(params[:text])
         # TODO isbnがない場合のエラー処理
+        if @book.blank?
+            p "blank"
+            # halt status: 404, json: { status: 404, message: "isbn:#{params[:text]} Not Found" }
+        end
 
         p "print book start"
         p @book
@@ -57,7 +60,6 @@ class BooksController < ApplicationController
         p headers
         p 'print slackResponse end'
 
-        # TODO slack body 調べる
         response = http.post(url.path, slackResponse.to_json, headers)
 
         p 'response start'
@@ -69,6 +71,10 @@ class BooksController < ApplicationController
         p 'hash start'
         p responseJson
         p 'hash end'
+        if response.code != 200
+            p "Slack投稿できなかったエラ〜メッセージ"
+            # halt status: 400, json: { status: 400, message: "Slack response failed" }
+        end
 
         render 'show', formats: :json, handlers: 'jbuilder'
     end

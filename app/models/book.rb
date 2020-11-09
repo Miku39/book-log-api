@@ -8,8 +8,21 @@ class Book < ApplicationRecord
         request = Net::HTTP::Get.new(url)
 
         response = http.request(request)
+
+        p response
+
         responseJson = response.read_body
+
+        p responseJson
+
         hash = JSON.parse(responseJson)
+
+        p hash
+        p hash["totalItems"]
+
+        if hash["totalItems"] == 0 then
+            return 0
+        end
 
         # DBに登録
         volumeInfo = hash["items"][0]["volumeInfo"]
