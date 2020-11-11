@@ -12,7 +12,8 @@ class BooksController < ApplicationController
         @book = Book.find_by_id(params[:id])
         # 本がない場合
         if @book.nil?
-            halt status: 404, json: { status: 404, message: "id:#{params[:id]} Not Found" }
+            render status: 404, json: { status: 404, message: "id:#{params[:id]} Not Found" }
+            return
         end
 
         render 'show', formats: :json, handlers: 'jbuilder'
@@ -34,9 +35,10 @@ class BooksController < ApplicationController
         # 送られてきたISBNを使用して本の情報を取得する
         @book = Book.create_with_isbn(params[:text])
         # TODO isbnがない場合のエラー処理
-        if @book.blank?
-            p "blank"
-            # halt status: 404, json: { status: 404, message: "isbn:#{params[:text]} Not Found" }
+        if @book.zero?
+            p "blankaaaaaaaa"
+            render status: 404, json: { status: 404, message: "isbn:#{params[:text]} Not Found" }
+            return
         end
 
         p "print book start"
