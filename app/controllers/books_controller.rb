@@ -38,6 +38,7 @@ class BooksController < ApplicationController
         # 送られてきたISBNを使用して本の情報を取得する
         @book = Book.create_with_isbn(params[:text])
         if @book.nil?
+            # TODO: slackにエラ〜メッセージ送る
             render status: 404, json: { status: 404, message: "isbn:#{params[:text]} Not Found" }
             return
         end
@@ -60,7 +61,8 @@ class BooksController < ApplicationController
         p responseJson
         p response.code
 
-        if response.code != 200
+        # TODO 200のenumをさがす Response.okみたいな
+        if response.code != "200"
             render status: 500, json: { status: 500, message: "Slack response failed" }
             return
         end
