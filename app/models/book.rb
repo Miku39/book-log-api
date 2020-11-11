@@ -9,19 +9,13 @@ class Book < ApplicationRecord
 
         response = http.request(request)
 
-        p response
-
         responseJson = response.read_body
-
-        p responseJson
 
         hash = JSON.parse(responseJson)
 
-        p hash
-        p hash["totalItems"]
-
+        # 本が取得できなかった場合
         if hash["totalItems"] == 0 then
-            return 0
+            return nil
         end
 
         # DBに登録

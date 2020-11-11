@@ -22,29 +22,26 @@ class BooksController < ApplicationController
     # 本を登録する
     def create
         @book = Book.create_with_isbn(params[:isbn])
+        if @book.nil?
+            render status: 404, json: { status: 404, message: "isbn:#{params[:isbn]} Not Found" }
+            return
+        end
 
         render 'show', formats: :json, handlers: 'jbuilder'
     end
 
     # Slack から本を登録する
     def slack
-        # TODO print delete
-        p "slack method!!!" 
+
         p params
 
         # 送られてきたISBNを使用して本の情報を取得する
         @book = Book.create_with_isbn(params[:text])
-        # TODO isbnがない場合のエラー処理
-        if @book.zero?
-            p "blankaaaaaaaa"
+        if @book.nil?
             render status: 404, json: { status: 404, message: "isbn:#{params[:text]} Not Found" }
             return
         end
 
-        p "print book start"
-        p @book
-        p "print book end"
-        
         url = URI.parse(params[:response_url])
         http = Net::HTTP.new(url.host, url.port)
         http.use_ssl = true
@@ -56,26 +53,16 @@ class BooksController < ApplicationController
             "text": @book.to_json
         }
 
-        p 'print slackResponse start'
-        p slackResponse.to_json
-        p url.path
-        p headers
-        p 'print slackResponse end'
-
         response = http.post(url.path, slackResponse.to_json, headers)
-
-        p 'response start'
-        p response
-        p 'response end'
-
         responseJson = response.read_body
        
-        p 'hash start'
+        p response
         p responseJson
-        p 'hash end'
+        p response.code
+
         if response.code != 200
-            p "Slack投稿できなかったエラ〜メッセージ"
-            # halt status: 400, json: { status: 400, message: "Slack response failed" }
+            render status: 500, json: { status: 500, message: "Slack response failed" }
+            return
         end
 
         render 'show', formats: :json, handlers: 'jbuilder'
