@@ -61,15 +61,17 @@ class BooksController < ApplicationController
         p responseJson
         p response.code
 
-        # TODO 200のenumをさがす Response.okみたいな
-        if response.code != "200"
+        case response
+        when Net::HTTPSuccess
+            render 'show', formats: :json, handlers: 'jbuilder'
+        else
             render status: 500, json: { status: 500, message: "Slack response failed" }
-            return
         end
 
-        render 'show', formats: :json, handlers: 'jbuilder'
     end
 
+    def send_slack_message(url, message)
+    end
 end
 
 
