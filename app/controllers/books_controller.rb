@@ -35,15 +35,32 @@ class BooksController < ApplicationController
 
         p params
 
+        errorEmoji = ":boom:"
         # 送られてきたISBNを使用して本の情報を取得する
         @book = Book.create_with_isbn(params[:text])
         if @book.nil?
-            # TODO: slackにエラ〜メッセージ送る
-            render status: 404, json: { status: 404, message: "isbn:#{params[:text]} Not Found" }
+            errorMessage = "isbn:#{params[:text]} Not Found"
+            slackPostResult = send_slack_message(params[:response_url], sprintf("%s %s", errorEmoji, errorMessage))
+            if !slackPostResult
+                errorMessage += " / Slack response failed"
+            end
+            render status: 404, json: { status: 404, message: errorMessage }
             return
         end
 
-        url = URI.parse(params[:response_url])
+        slackPostResult = send_slack_message(params[:response_url], @book.to_json)
+       
+        case slackPostResult
+        when true
+            render 'show', formats: :json, handlers: 'jbuilder'
+        else
+            render status: 500, json: { status: 500, message: "Slack response failed" }
+        end
+
+    end
+
+    def send_slack_message(postUrl, message)
+        url = URI.parse(postUrl)
         http = Net::HTTP.new(url.host, url.port)
         http.use_ssl = true
 
@@ -51,7 +68,7 @@ class BooksController < ApplicationController
 
         slackResponse = {
             "response_type": "in_channel",
-            "text": @book.to_json
+            "text": message
         }
 
         response = http.post(url.path, slackResponse.to_json, headers)
@@ -63,14 +80,10 @@ class BooksController < ApplicationController
 
         case response
         when Net::HTTPSuccess
-            render 'show', formats: :json, handlers: 'jbuilder'
+            true
         else
-            render status: 500, json: { status: 500, message: "Slack response failed" }
+            false
         end
-
-    end
-
-    def send_slack_message(url, message)
     end
 end
 
