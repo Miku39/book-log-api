@@ -40,10 +40,14 @@ class BooksController < ApplicationController
         @book = Book.create_with_isbn(params[:text])
         if @book.nil?
             errorMessage = "isbn:#{params[:text]} Not Found"
+            p errorMessage
+            p params[:response_url]
             slackPostResult = send_slack_message(params[:response_url], sprintf("%s %s", errorEmoji, errorMessage))
+            p slackPostResult
             if !slackPostResult
                 errorMessage += " / Slack response failed"
             end
+            p errorMessage
             render status: 404, json: { status: 404, message: errorMessage }
             return
         end
