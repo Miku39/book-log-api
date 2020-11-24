@@ -30,6 +30,21 @@ class BooksController < ApplicationController
         render 'show', formats: :json, handlers: 'jbuilder'
     end
 
+    def destroy
+        p "destroy"
+        # id = params[:id]
+        # book = Book.find_by_id(id)
+        # # 本がない場合
+        # if book.nil?
+        #     render status: 404, json: { status: 404, message: "id:#{id} Not Found" }
+        #     return
+        # end
+
+        # result = Book.find(id).delete
+
+        # p result
+    end
+
     # Slack から本を登録する
     def slack
 
