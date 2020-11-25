@@ -32,6 +32,7 @@ class BooksController < ApplicationController
 
     def destroy
         p "destroy"
+        p params
         # id = params[:id]
         # book = Book.find_by_id(id)
         # # 本がない場合
