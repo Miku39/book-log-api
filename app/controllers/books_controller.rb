@@ -46,6 +46,7 @@ class BooksController < ApplicationController
     end
 
     # Slack から本を登録する
+    # TODO メソッド名を変更して、slash commandの設定も変える
     def slack
 
         p params
@@ -78,6 +79,7 @@ class BooksController < ApplicationController
 
     end
 
+    # slackにメッセージを送信する
     def send_slack_message(postUrl, message)
         url = URI.parse(postUrl)
         http = Net::HTTP.new(url.host, url.port)
