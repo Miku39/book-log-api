@@ -45,10 +45,40 @@ class BooksController < ApplicationController
         render 'show', formats: :json, handlers: 'jbuilder'
     end
 
-    # Slack から本を登録する
-    # TODO メソッド名を変更して、slash commandの設定も変える
-    def slack
+    # Slack に本の詳細を表示する
+    def show_via_slack
+        p params
 
+        errorEmoji = ":boom:"
+        # 送られてきたISBNを使用して本の情報を取得する
+        @book = Book.create_with_isbn(params[:text])
+        if @book.nil?
+            errorMessage = "isbn:#{params[:text]} Not Found"
+            p errorMessage
+            p params[:response_url]
+            slackPostResult = send_slack_message(params[:response_url], sprintf("%s %s", errorEmoji, errorMessage))
+            p slackPostResult
+            if !slackPostResult
+                errorMessage += " / Slack response failed"
+            end
+            p errorMessage
+            render status: 404, json: { status: 404, message: errorMessage }
+            return
+        end
+
+        slackPostResult = send_slack_message(params[:response_url], @book.to_json)
+       
+        case slackPostResult
+        when true
+            render 'show', formats: :json, handlers: 'jbuilder'
+        else
+            render status: 500, json: { status: 500, message: "Slack response failed" }
+        end
+
+    end
+
+    # Slack から本を登録する
+    def create_via_slack
         p params
 
         errorEmoji = ":boom:"
