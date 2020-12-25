@@ -50,10 +50,10 @@ class BooksController < ApplicationController
         p params
 
         errorEmoji = ":boom:"
-        # 送られてきたISBNを使用して本の情報を取得する
-        @book = Book.create_with_isbn(params[:text])
+        # 送られてきたidを使用して本の情報を取得する
+        @book = Book.find_by_id(params[:text])
         if @book.nil?
-            errorMessage = "isbn:#{params[:text]} Not Found"
+            errorMessage = "id:#{params[:text]} Not Found"
             p errorMessage
             p params[:response_url]
             slackPostResult = send_slack_message(params[:response_url], sprintf("%s %s", errorEmoji, errorMessage))
