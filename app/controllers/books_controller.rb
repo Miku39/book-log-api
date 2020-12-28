@@ -109,6 +109,40 @@ class BooksController < ApplicationController
 
     end
 
+    # Slack から本を削除する
+    def destroy_via_slack
+        p params
+
+        errorEmoji = ":boom:"
+        # 送られてきたidを使用して本の情報を取得する
+        book = Book.find_by_id(params[:text])
+        if book.nil?
+            errorMessage = "id:#{params[:text]} Not Found"
+            p errorMessage
+            p params[:response_url]
+            slackPostResult = send_slack_message(params[:response_url], sprintf("%s %s", errorEmoji, errorMessage))
+            p slackPostResult
+            if !slackPostResult
+                errorMessage += " / Slack response failed"
+            end
+            p errorMessage
+            render status: 404, json: { status: 404, message: errorMessage }
+            return
+        end
+
+        @book = Book.find(params[:text]).delete
+
+        slackPostResult = send_slack_message(params[:response_url], @book.to_json)
+       
+        case slackPostResult
+        when true
+            render 'show', formats: :json, handlers: 'jbuilder'
+        else
+            render status: 500, json: { status: 500, message: "Slack response failed" }
+        end
+
+    end
+
     # slackにメッセージを送信する
     def send_slack_message(postUrl, message)
         url = URI.parse(postUrl)
